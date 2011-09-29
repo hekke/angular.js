@@ -1437,10 +1437,10 @@ angularWidget('ng:view', function(element) {
         changeCounter++;
       });
 
-      this.$watch(function(){return changeCounter;}, function() {        
+      this.$watch(function(){return changeCounter;}, function() {
         var template = $route.current && $route.current.template;
         if (template) {
-	  scope.$emit('$beforeViewChange', template);
+          scope.$emit('$beforeViewChange', template);
           //xhr's callback must be async, see commit history for more info
           $xhr('GET', template, function(code, response) {
             element.html(response);
