@@ -1429,20 +1429,23 @@ angularWidget('ng:view', function(element) {
   if (!element[0]['ng:compiled']) {
     element[0]['ng:compiled'] = true;
     return annotate('$xhr.cache', '$route', function($xhr, $route, element){
-      var template;
-      var changeCounter = 0;
+      var template,
+          changeCounter = 0,
+          scope = this;
 
       this.$on('$afterRouteChange', function(){
         changeCounter++;
       });
 
-      this.$watch(function(){return changeCounter;}, function() {
+      this.$watch(function(){return changeCounter;}, function() {        
         var template = $route.current && $route.current.template;
         if (template) {
+	  scope.$emit('$beforeViewChange', template);
           //xhr's callback must be async, see commit history for more info
           $xhr('GET', template, function(code, response) {
             element.html(response);
             compiler.compile(element)($route.current.scope);
+            scope.$emit('$afterViewChange', template);
           });
         } else {
           element.html('');
