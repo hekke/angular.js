@@ -1431,7 +1431,7 @@ angularWidget('ng:view', function(element) {
     return annotate('$xhr.cache', '$route', function($xhr, $route, element){
       var template,
           changeCounter = 0,
-          scope = this;
+          rootScope = this.$root;
 
       this.$on('$afterRouteChange', function(){
         changeCounter++;
@@ -1440,12 +1440,12 @@ angularWidget('ng:view', function(element) {
       this.$watch(function(){return changeCounter;}, function() {
         var template = $route.current && $route.current.template;
         if (template) {
-          scope.$emit('$beforeViewChange', template);
+          rootScope.$broadcast('$beforeViewChange', template);
           //xhr's callback must be async, see commit history for more info
           $xhr('GET', template, function(code, response) {
             element.html(response);
             compiler.compile(element)($route.current.scope);
-            scope.$emit('$afterViewChange', template);
+            rootScope.$broadcast('$afterViewChange', template);
           });
         } else {
           element.html('');
